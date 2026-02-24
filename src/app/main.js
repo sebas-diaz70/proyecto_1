@@ -1,5 +1,3 @@
-
-
 // Obtener los datos que escribe el usuario en consola
 var argumentos = process.argv;
 
@@ -74,5 +72,6 @@ else {
 
 // Mostrar resultado con 2 decimales
 console.log(resultado.toFixed(2) + " " + unidadDestino);
+
 
 process.exit(0);
