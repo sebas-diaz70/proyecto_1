@@ -7,8 +7,15 @@ var rl = readline.createInterface({
     output: process.stdout
 });
 
-// Pregunto el valor
+// Pregunto el valor que va a ingresar el usuario
 rl.question("Ingrese el valor: ", function(valor) {
+
+    // Verifico que no esté vacío para que el programa no tome un espacio vacío como 0
+    if (valor.trim() === "") {
+        console.log("Error: Debe ingresar un valor.");
+        rl.close();
+        return;
+    }
 
     // Pregunto la unidad de origen
     rl.question("Ingrese la unidad de origen: ", function(unidadOrigen) {
@@ -16,28 +23,42 @@ rl.question("Ingrese el valor: ", function(valor) {
         // Pregunto la unidad de destino
         rl.question("Ingrese la unidad de destino: ", function(unidadDestino) {
 
+            // Paso todo a minúsculas y elimino espacios para evitar errores
+            unidadOrigen = unidadOrigen.trim().toLowerCase();
+            unidadDestino = unidadDestino.trim().toLowerCase();
+
+            // Lista de unidades permitidas
+            var unidadesValidas = ["c", "f", "k", "m", "km", "cm"];
+
+            // Verifico que las unidades existan
+            if (!unidadesValidas.includes(unidadOrigen) || !unidadesValidas.includes(unidadDestino)) {
+                console.log("Error: Unidad no válida. Use: c, f, k, m, km, cm.");
+                rl.close();
+                return;
+            }
+
             // Convierto el valor a número
             valor = Number(valor);
 
             // Verifico que sea un número válido y que no sea infinito
             if (isNaN(valor) || !isFinite(valor)) {
-                console.log("Error: Valor inválido");
+                console.log("Error: Valor inválido. Debe ingresar un número.");
                 rl.close();
                 return;
             }
 
-            // Paso todo a minúscula para evitar problemas al convertir
-
-            unidadOrigen = unidadOrigen.toLowerCase();
-            unidadDestino = unidadDestino.toLowerCase();
-
             var resultado;
 
-          
-            // CONVERSIONES TEMPERATURA
-          
+            // Si las unidades son iguales, el resultado es el mismo valor
+            if (unidadOrigen == unidadDestino) {
+                resultado = valor;
+            }
 
-            if (unidadOrigen == "c" && unidadDestino == "f") {
+            // ==========================
+            // CONVERSIONES DE TEMPERATURA
+            // ==========================
+
+            else if (unidadOrigen == "c" && unidadDestino == "f") {
                 resultado = (valor * 9/5) + 32;
             }
             else if (unidadOrigen == "f" && unidadDestino == "c") {
@@ -56,9 +77,9 @@ rl.question("Ingrese el valor: ", function(valor) {
                 resultado = (valor - 273.15) * 9/5 + 32;
             }
 
-            
-            // CONVERSIONES LONGITUD
-          
+            // ==========================
+            // CONVERSIONES DE LONGITUD
+            // ==========================
 
             else if (unidadOrigen == "m" && unidadDestino == "km") {
                 resultado = valor / 1000;
@@ -72,15 +93,28 @@ rl.question("Ingrese el valor: ", function(valor) {
             else if (unidadOrigen == "m" && unidadDestino == "cm") {
                 resultado = valor * 100;
             }
+            else if (unidadOrigen == "km" && unidadDestino == "cm") {
+                resultado = valor * 100000;
+            }
+            else if (unidadOrigen == "cm" && unidadDestino == "km") {
+                resultado = valor / 100000;
+            }
 
-            // Si no coincide ninguna opción
+            // Si intenta convertir entre categorías distintas
             else {
-                console.log("Error: Unidades no soportadas o categorías diferentes");
+                console.log("Error: No se puede convertir entre categorías diferentes.");
                 rl.close();
                 return;
             }
 
-            // Muestra el resultado y nos muestra dos decimales despues de la coma masla unida final
+            // Protección extra por seguridad
+            if (resultado === undefined) {
+                console.log("Error interno en la conversión.");
+                rl.close();
+                return;
+            }
+
+            // Mostrar resultado con 2 decimales
             console.log("Resultado: " + resultado.toFixed(2) + " " + unidadDestino);
 
             // Cierro la consola
