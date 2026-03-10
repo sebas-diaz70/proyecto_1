@@ -35,6 +35,3 @@ const nuevosPrecios = productos.map((p) => ({
 }));
 
 console.log(nuevosPrecios);
-
-
-
